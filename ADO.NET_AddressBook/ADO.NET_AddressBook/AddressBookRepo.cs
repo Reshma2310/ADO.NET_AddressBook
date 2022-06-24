@@ -12,7 +12,44 @@ namespace ADO.NET_AddressBook
     {
         public static string dbpath = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=AddressBook;";
         SqlConnection connect = new SqlConnection(dbpath);
-
+        public void CreateNewContact()
+        {
+            SqlConnection connect = new SqlConnection(dbpath);
+            using (connect)
+            {
+                connect.Open();
+                ADO.NET_AddressBook.AddressBookModel model = new ADO.NET_AddressBook.AddressBookModel();
+                Console.WriteLine("Enter First Name");
+                model.FirstName = Console.ReadLine();
+                Console.WriteLine("Enter Last Name");
+                model.LastName = Console.ReadLine();
+                Console.WriteLine("Enter Address ");
+                model.Address = Console.ReadLine();
+                Console.WriteLine("Enter City ");
+                model.City = Console.ReadLine();
+                Console.WriteLine("Enter State ");
+                model.State = Console.ReadLine();
+                Console.WriteLine("Enter Zip Code ");
+                model.ZipCode = Convert.ToInt32(Console.ReadLine());
+                Console.WriteLine("Enter Phone ");
+                model.PhoneNumber = (int)Convert.ToInt64(Console.ReadLine()); 
+                Console.WriteLine("Enter Email ");
+                model.Email = Console.ReadLine();
+                SqlCommand sql = new SqlCommand("SPAddress_Book", connect);
+                sql.CommandType = CommandType.StoredProcedure;
+                sql.Parameters.AddWithValue("@FirstName", model.FirstName);
+                sql.Parameters.AddWithValue("@LastName", model.LastName);
+                sql.Parameters.AddWithValue("@Address", model.Address);
+                sql.Parameters.AddWithValue("@City", model.City);
+                sql.Parameters.AddWithValue("@State", model.State);
+                sql.Parameters.AddWithValue("@ZipCode", model.ZipCode);
+                sql.Parameters.AddWithValue("@PhoneNumber", model.PhoneNumber);
+                sql.Parameters.AddWithValue("@Email", model.Email);
+                sql.ExecuteNonQuery();
+                Console.WriteLine("Record created successfully.");
+                connect.Close();
+            }
+        }
         public void RetrieveDataFromDatabase()
         {
             ADO.NET_AddressBook.AddressBookModel model = new ADO.NET_AddressBook.AddressBookModel();

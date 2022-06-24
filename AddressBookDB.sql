@@ -107,3 +107,17 @@ SELECT * FROM Address_Contacts WHERE City = 'Hyd' ORDER BY FirstName
 
 SELECT TYPE_Name,COUNT(TYPE_Name) FROM Type_Contacts CT INNER JOIN Address_Contacts CA ON CT.Type_ID = CA.Type_ID GROUP BY TYPE_Name
 SELECT TYPE_Name,CA.FirstName,PhoneNo1 FROM Type_Contacts CT INNER JOIN Address_Contacts CA ON CT.Type_ID = CA.Type_ID INNER JOIN Phone_Contacts CP ON CA.CONTACT_ID = CP.CONTACT_ID
+
+CREATE PROCEDURE SPAddress_Book (@FirstName VARCHAR(25),@LastName VARCHAR(25),@Address VARCHAR(100),
+@City VARCHAR(25),@State VARCHAR(25),@ZipCode INT,@PhoneNumber BIGINT,@Email VARCHAR(50))
+AS
+BEGIN
+SET NOCOUNT ON;
+INSERT INTO Address_Book([FirstName],[LastName],[Address],[City],[State],[ZipCode],[PhoneNumber],[Email])
+VALUES(@FirstName,@LastName,@Address,@City,@State,@ZipCode,@PhoneNumber,@Email)
+END
+GO
+EXEC [dbo].[SPAddress_Book] @FirstName='Dastagiri',@LastName='Da',@Address='23/6A',
+@City='Knl',@State='AP',@ZipCode=234543,@PhoneNumber=2323232323,@Email='giri@gmail.com';
+GO
+SELECT * FROM Address_Book;
