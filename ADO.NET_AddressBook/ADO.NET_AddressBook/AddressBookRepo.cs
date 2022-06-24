@@ -59,7 +59,7 @@ namespace ADO.NET_AddressBook
             {
                 using (connect)
                 {
-                    Console.WriteLine("Enter name of Person:");
+                    Console.WriteLine("Enter Name of Person:");
                     string FirstName = Console.ReadLine();
                     Console.WriteLine("Enter ZipCode to update:");
                     int ZipCode = Convert.ToInt32(Console.ReadLine());                   
@@ -73,6 +73,20 @@ namespace ADO.NET_AddressBook
             catch (FormatException)
             {
                 Console.WriteLine("Error:Records are not updated");
+            }
+        }
+        public void DeleteAddressBookContact()
+        {
+            SqlConnection connect = new SqlConnection(dbpath);
+            using (connect)
+            {
+                connect.Open();
+                Console.WriteLine("Enter name of person to  delete from records:");
+                string Name = Console.ReadLine();
+                string query = "DELETE FROM Address_Book WHERE FirstName='" + Name + "'";
+                SqlCommand command = new SqlCommand(query, connect);
+                command.ExecuteNonQuery();
+                connect.Close();
             }
         }
     }
