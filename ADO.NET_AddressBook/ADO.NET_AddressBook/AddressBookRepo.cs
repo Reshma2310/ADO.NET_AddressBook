@@ -51,6 +51,29 @@ namespace ADO.NET_AddressBook
 
             }
             connect.Close();
-        }        
+        }
+        public void UpdateRecordDetails()
+        {
+            SqlConnection connect = new SqlConnection(dbpath);
+            try
+            {
+                using (connect)
+                {
+                    Console.WriteLine("Enter name of Person:");
+                    string FirstName = Console.ReadLine();
+                    Console.WriteLine("Enter ZipCode to update:");
+                    int ZipCode = Convert.ToInt32(Console.ReadLine());                   
+                    connect.Open();
+                    string query = "update Address_Book set ZipCode =" + ZipCode + "Where FirstName='" + FirstName + "'";
+                    SqlCommand cmd = new SqlCommand(query, connect);
+                    cmd.ExecuteNonQuery();
+                    Console.WriteLine("Records updated successfully");
+                }
+            }
+            catch (FormatException)
+            {
+                Console.WriteLine("Error:Records are not updated");
+            }
+        }
     }
 }
