@@ -10,8 +10,7 @@ namespace ADO.NET_AddressBook
 {
     public class AddressBookRepo
     {
-        public static string dbpath = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=AddressBook;";
-        SqlConnection connect = new SqlConnection(dbpath);
+        public static string dbpath = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=AddressBook;Integrated Security=True"";        
         public void CreateNewContact()
         {
             SqlConnection connect = new SqlConnection(dbpath);
