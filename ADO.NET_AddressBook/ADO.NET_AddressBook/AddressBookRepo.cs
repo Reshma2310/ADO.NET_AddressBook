@@ -10,11 +10,11 @@ namespace ADO.NET_AddressBook
 {
     public class AddressBookRepo
     {
-        public static string dbpath = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=AddressBook;";
-        SqlConnection connect = new SqlConnection(dbpath);
-        public void CreateNewContact()
+        public static string dbpath = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=AddressBook;Integrated Security=True";        
+        /*public void CreateNewContact()
         {
             SqlConnection connect = new SqlConnection(dbpath);
+            lock (this)
             using (connect)
             {
                 connect.Open();
@@ -49,6 +49,28 @@ namespace ADO.NET_AddressBook
                 Console.WriteLine("Record created successfully.");
                 connect.Close();
             }
+        }*/
+        public void CreateNewContact(AddressBookModel model)
+        {
+            SqlConnection connect = new SqlConnection(dbpath);
+            lock (this)
+                using (connect)
+                {
+                    connect.Open();                    
+                    SqlCommand sql = new SqlCommand("SPAddress_Book", connect);
+                    sql.CommandType = CommandType.StoredProcedure;
+                    sql.Parameters.AddWithValue("@FirstName", model.FirstName);
+                    sql.Parameters.AddWithValue("@LastName", model.LastName);
+                    sql.Parameters.AddWithValue("@Address", model.Address);
+                    sql.Parameters.AddWithValue("@City", model.City);
+                    sql.Parameters.AddWithValue("@State", model.State);
+                    sql.Parameters.AddWithValue("@ZipCode", model.ZipCode);
+                    sql.Parameters.AddWithValue("@PhoneNumber", model.PhoneNumber);
+                    sql.Parameters.AddWithValue("@Email", model.Email);
+                    sql.ExecuteNonQuery();
+                    Console.WriteLine("Record created successfully.");
+                    connect.Close();
+                }
         }
         public void RetrieveDataFromDatabase()
         {
@@ -62,8 +84,7 @@ namespace ADO.NET_AddressBook
                 SqlCommand command = new SqlCommand(query, connect);
                 SqlDataReader reader = command.ExecuteReader();
                 if (reader.HasRows)
-                {
-                    //Console.WriteLine("ID\tName\t\t\tSalary\t\t\tDate\t\t\t\tGender\n");
+                {                    
                     while (reader.Read())
                     {
                         model.ID = reader.GetInt32(0);
@@ -104,7 +125,7 @@ namespace ADO.NET_AddressBook
                     string query = "update Address_Book set ZipCode =" + ZipCode + "Where FirstName='" + FirstName + "'";
                     SqlCommand cmd = new SqlCommand(query, connect);
                     cmd.ExecuteNonQuery();
-                    Console.WriteLine("Records updated successfully");
+                    Console.WriteLine("Records updated successfully");                    
                 }
             }
             catch (FormatException)
@@ -126,5 +147,19 @@ namespace ADO.NET_AddressBook
                 connect.Close();
             }
         }
+        public void AddMultipleEmployee(List<AddressBookModel> data)
+        {
+            data.ForEach(details =>
+            {
+                Thread thread = new Thread(() =>
+                {
+                    Console.WriteLine("Thread Start Time: " + DateTime.Now);
+                    this.CreateNewContact(details);
+                    Console.WriteLine("Contact Added: " + details.FirstName);
+                    Console.WriteLine("Thread End Time: " + DateTime.Now);
+                });
+                thread.Start();
+            });
+        }        
     }
 }
