@@ -38,5 +38,23 @@ namespace RESTSharp_Testing
                 Console.WriteLine("Id:" + value.id + ",\t " + value.FirstName + ",\t " + value.LastName + ",\t" + value.Address + ",\t " + value.City + ",\t" + value.State + ",\t " + value.ZipCode + ",\t" + value.PhoneNumber + ",\t " + value.Email);
             }
         }
+        [TestMethod]
+        public void OnPostingEmployeeData_AddtoJsonServer_ReturnRecentlyAddedData()
+        {
+            client = new RestClient("http://localhost:4000");
+            //Arrange
+            RestRequest request = new RestRequest("/AddressBook", Method.Post);
+            var body = new AddressBook { FirstName = "Reshu", LastName = "D", Address = "49/50-A", City = "Kurnool",
+                                          State = "AndhraPradesh", ZipCode = "112323", PhoneNumber = "4441231231", Email = "reshu@gmail.com" };
+            request.AddParameter("application/json", body, ParameterType.RequestBody);
+            //Act
+            RestResponse response = client.Execute(request);
+            //Assert
+            Assert.AreEqual(response.StatusCode, HttpStatusCode.Created);
+            AddressBook value = JsonConvert.DeserializeObject<AddressBook>(response.Content);
+            Assert.AreEqual("Reshu", value.FirstName);
+            Assert.AreEqual("112323", value.ZipCode);
+            Console.WriteLine(response.Content);
+        }
     }
 }
