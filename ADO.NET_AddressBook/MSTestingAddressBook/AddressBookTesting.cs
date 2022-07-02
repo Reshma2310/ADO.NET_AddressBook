@@ -81,6 +81,27 @@ namespace RESTSharp_Testing
                 Assert.AreEqual(body.ZipCode, value.ZipCode);
                 Console.WriteLine(response.Content);
             });
+        }
+        [TestMethod]
+        public void OnUpdatingEmployeeData_ShouldUpdateValueInJsonServer()
+        {
+            client = new RestClient("http://localhost:4000");
+            //Arrange
+            RestRequest request = new RestRequest("/AddressBook/11", Method.Put);
+            List<AddressBook> list = new List<AddressBook>();
+            AddressBook body = new AddressBook
+            {
+                FirstName = "Vahidha", Address = "4/5-A3", City = "Kurnool", State = "AndhraPradesh",
+                ZipCode = "112323", PhoneNumber = "5551231231", Email = "vahidha@gmail.com" };
+            request.AddParameter("application/json", body, ParameterType.RequestBody);
+            //Act
+            RestResponse response = client.Execute(request);
+            //Assert
+            Assert.AreEqual(response.StatusCode, HttpStatusCode.OK);
+            AddressBook value = JsonConvert.DeserializeObject<AddressBook>(response.Content);
+            Assert.AreEqual("Vahidha", value.FirstName);
+            Assert.AreEqual("112323", value.ZipCode);
+            Console.WriteLine(response.Content);
         }        
     }
 }
