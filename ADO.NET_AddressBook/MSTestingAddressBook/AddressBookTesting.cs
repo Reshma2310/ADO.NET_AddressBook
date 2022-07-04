@@ -56,5 +56,31 @@ namespace RESTSharp_Testing
             Assert.AreEqual("112323", value.ZipCode);
             Console.WriteLine(response.Content);
         }
+        [TestMethod]
+        public void OnPostingMultipleEmployees_AddToJsonServer_ReturnListOfAddedData()
+        {
+            client = new RestClient("http://localhost:4000");
+            //Arrange
+            List<AddressBook> list = new List<AddressBook>();
+            list.Add(new AddressBook {  FirstName = "Dastagiri", LastName = "D", Address = "49/5-A6", City = "Kurnool",
+                State = "AndhraPradesh", ZipCode = "112323", PhoneNumber = "3331231231", Email = "giri@gmail.com" });
+            list.Add(new AddressBook { FirstName = "Khajabi", LastName = "D", Address = "49/5-A2", City = "Kurnool",
+                State = "AndhraPradesh", ZipCode = "112323", PhoneNumber = "2221231231", Email = "khajabi@gmail.com" });
+            list.Add(new AddressBook { FirstName = "Vahidha", LastName = "D", Address = "4/5-A3", City = "Kurnool",
+                State = "AndhraPradesh", ZipCode = "112323", PhoneNumber = "5551231231", Email = "vahidha@gmail.com" });
+            list.ForEach(body =>
+            {
+                RestRequest request = new RestRequest("/AddressBook", Method.Post);
+                request.AddParameter("application/json", body, ParameterType.RequestBody);
+                //Act
+                RestResponse response = client.Execute(request);
+                //Assert
+                Assert.AreEqual(response.StatusCode, HttpStatusCode.Created);
+                AddressBook value = JsonConvert.DeserializeObject<AddressBook>(response.Content);
+                Assert.AreEqual(body.FirstName, value.FirstName);
+                Assert.AreEqual(body.ZipCode, value.ZipCode);
+                Console.WriteLine(response.Content);
+            });
+        }        
     }
 }
